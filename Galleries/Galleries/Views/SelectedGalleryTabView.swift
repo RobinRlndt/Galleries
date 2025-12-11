@@ -8,10 +8,28 @@
 import SwiftUI
 
 struct SelectedGalleryTabView: View {
-    @Binding var selectedItem: String?
+    let selectedItem: Gallery?
+    @Environment(PathStore.self) var pathStore
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        @Bindable var pathBinding = pathStore
+
+        if let gallery = selectedItem {
+            NavigationStack(path: $pathBinding.path) {
+                GalleryDetailView(gallery: gallery)
+                    .navigationTitle(gallery.name)
+            }
+            .navigationDestination(for: Destination.self) { destination in
+                AppDataView(destination: destination)
+            }
+        } else {
+            Text("No gallery selected")
+        }
     }
 }
+
+
+
+
 
 

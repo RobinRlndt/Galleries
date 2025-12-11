@@ -9,33 +9,44 @@ import SwiftUI
 
 struct GalleriesTabView: View {
     @Environment(GalleryData.self) var galleryDataStore
-    @State var selectedItem: String?
-    @State var loading = true
-    
+    @Binding var selectedItem: Gallery?
+    @State private var loading = true
+
     var body: some View {
-                if loading {
-                    ProgressView("Loading...")
-                        .navigationTitle("Galleries")
-                } else {
-                    List(galleryDataStore.galleries, id: \.self, selection: $selectedItem) { gallery in
-                        VStack {
-                            Text("\(gallery.name)")
-                                .font(.title)
-                                .foregroundColor(Color.accentColor)
-                            Text("\(gallery.location)")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                            Text("\(gallery.description)")
-                                .font(.caption)
-                            
-                            Divider()
-                        }
+        Group {
+            if loading {
+                ProgressView("Loading...")
+            } else {
+                List(galleryDataStore.galleries, id: \.self) { gallery in
+                    let isSelected = selectedItem == gallery 
+
+                    VStack {
+                        Text(gallery.name)
+                            .font(.title)
+                            .foregroundColor(.accentColor)
+                        Text(gallery.location)
+                            .font(.caption)
+                            .fontWeight(.bold)
+                        Text(gallery.description)
+                            .font(.caption)
+                        Divider()
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture { selectedItem = gallery }
+                    .listRowBackground(
+                        isSelected ? Color.accentColor.opacity(0.2) : Color.clear
+                    )
                 }
-            .task {
-                await galleryDataStore.loadData()
-                loading = false
             }
+        }
+        .navigationTitle("Galleries")
+        .task {
+            await galleryDataStore.loadData()
+            loading = false
         }
     }
 }
+
+
+
 

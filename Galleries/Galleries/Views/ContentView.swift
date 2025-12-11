@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var selectedItem: String?
+    @State var selectedItem: Gallery?
     
     var body: some View {
         TabView {
             Tab {
-                GalleriesTabView()
+                GalleriesTabView(selectedItem: $selectedItem)
             } label: {
                 Text("Galleries")
             }
             Tab {
-                SelectedGalleryTabView(selectedItem: $selectedItem)
+                SelectedGalleryTabView(selectedItem: selectedItem)
             } label: {
                 if let item = selectedItem {
-                    Text("\(item)")
+                    Text("\(item.name)")
                 } else {
                     Text("No Gallery")
                 }
